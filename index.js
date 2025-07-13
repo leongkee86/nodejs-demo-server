@@ -21,7 +21,7 @@ app.use( cors(
                 return callback( null, true );
             }
 
-            const allowedOrigin = `${ HOSTNAME }:${ process.env.ALLOWED_ORIGIN_PORT }`;
+            const allowedOrigin = process.env.ALLOWED_ORIGIN;
             if (origin === allowedOrigin)
             {
                 callback( null, true );
