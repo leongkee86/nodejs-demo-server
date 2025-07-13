@@ -1,9 +1,38 @@
 const express = require( 'express' );
 const cors = require('cors');
+const dotenv = require('dotenv');
 const app = express();
+
+dotenv.config();
+
+const HOSTNAME = process.env.HOSTNAME || "http://localhost";
 const PORT = process.env.PORT || 3000;
 
-app.use( cors() ); // allows all origins
+// app.use( cors() ); // Allows all origins
+
+// Set up CORS to allow only the specific origin.
+app.use( cors(
+    {
+        origin: function ( origin, callback )
+        {
+            // If there's no origin (like curl or mobile apps), allow it.
+            if (!origin)
+            {
+                return callback( null, true );
+            }
+
+            const allowedOrigin = `${ HOSTNAME }:${ process.env.ALLOWED_ORIGIN_PORT }`;
+            if (origin === allowedOrigin)
+            {
+                callback( null, true );
+            }
+            else
+            {
+                callback( new Error( 'Not allowed by CORS' ) );
+            }
+        }
+    }
+) );
 
 // Middleware to parse JSON
 app.use( express.json() );
@@ -52,7 +81,7 @@ app.delete( '/delete-all-users', ( req, res ) =>
 // Start server
 app.listen( PORT, () =>
 {
-    console.log( `Server running on http://localhost:${PORT}` );
+    console.log( `Server running on ${ HOSTNAME }:${ PORT }` );
 }
 );
 
